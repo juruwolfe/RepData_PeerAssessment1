@@ -8,7 +8,7 @@
 ## load the plyr library which we'll use to impute missing data
 library(plyr)
 
-## load the plyr library which we'll use to make the weekday plots
+## load the lattice library which we'll use to make the weekday plots
 library(lattice) 
 
 ## unzip the data and get the files
