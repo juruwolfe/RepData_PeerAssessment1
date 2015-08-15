@@ -1,15 +1,10 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
 
-```{r}
 
+```r
 ## load the plyr library which we'll use to impute missing data
 library(plyr)
 
@@ -23,7 +18,8 @@ activity <- read.csv(files)
 
 
 ## What is mean total number of steps taken per day?
-```{r}
+
+```r
 ## Excluding NA values, get the aggregate sum of steps per day
 totalStepsPerDay <- aggregate(activity$steps[!is.na(activity$steps) & !is.na(activity$date)], list(day=activity$date[!is.na(activity$steps) & !is.na(activity$date)]),sum)
 
@@ -40,10 +36,13 @@ medianOnTotal <- median(totalStepsPerDay$total_steps)
 hist(totalStepsPerDay$total_steps, main="Total steps per day", xlab="Steps")
 ```
 
-The median total number of steps is `r medianOnTotal`. The mean is `r meanOnTotal` to the nearest integer.
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png) 
+
+The median total number of steps is 10765. The mean is 10766 to the nearest integer.
 
 ## What is the average daily activity pattern?
-```{r}
+
+```r
 ## Excluding NA values, get the aggregate sum of steps per day
 averageStepsPerDay <- aggregate(activity$steps[!is.na(activity$steps) & !is.na(activity$date)], list(interval=activity$interval[!is.na(activity$steps) & !is.na(activity$date)]),mean)
 
@@ -54,28 +53,33 @@ colnames(averageStepsPerDay) <- names
 
 ## Plot as a line chart
 plot(averageStepsPerDay$interval, averageStepsPerDay$average_steps, type="l", main="Average daily activity pattern", xlab="Interval", ylab="Average number of steps")
-
-## Get the 5-minute interval that, on average across all the days in the dataset, contains the maximum number of steps
-maxInterval <- averageStepsPerDay$interval[averageStepsPerDay$average_steps == max(averageStepsPerDay$average_steps)]
-  
 ```
 
-`r maxInterval` is the 5-minute interval that, on average across all the days in the dataset, contains the maximum number of steps.
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
+
+```r
+## Get the 5-minute interval that, on average across all the days in the dataset, contains the maximum number of steps
+maxInterval <- averageStepsPerDay$interval[averageStepsPerDay$average_steps == max(averageStepsPerDay$average_steps)]
+```
+
+835 is the 5-minute interval that, on average across all the days in the dataset, contains the maximum number of steps.
 
 ## Imputing missing values
 
-```{r}
+
+```r
 ## get all rows with missing data
 missingData <- activity[is.na(activity),]
 numberOfMissingRows <- length(missingData$steps)
 ```
 
-There are `r numberOfMissingRows` rows with missing data.
+There are 2304 rows with missing data.
 
 In order to determine the best way to fill in the missing data, I poked around StackOverflow and found a thread on [imputing missing data with a mean](http://stackoverflow.com/questions/9322773/how-to-replace-na-with-mean-by-subset-in-r-impute-with-plyr). Modified the code for this particular data set, but the original concept can be found at that link. 
 
 
-```{r}
+
+```r
 ## Will replace the missing data fields with the mean of the steps for that interval using the plyr library
 
 ## create a function to impute the missing data of variable x with the mean of the group
@@ -105,12 +109,15 @@ medianOnTotal_noMissing <- as.integer(median(totalStepsPerDay_NoMissingData$tota
 hist(totalStepsPerDay_NoMissingData$total_steps, main="Total steps per day (missing data imputed)", xlab="Steps")
 ```
 
-The median total number of steps is `r medianOnTotal_noMissing` to the closest integer. The mean is also `r meanOnTotal_noMissing` to the closest integer. While before, the median was one-off, it is now the same as the mean.
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
+
+The median total number of steps is 10766 to the closest integer. The mean is also 10766 to the closest integer. While before, the median was one-off, it is now the same as the mean.
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r}
+
+```r
 ## create new column that says the weekday for each date
 activitesWithoutMissingData$day <- weekdays(as.Date(activitesWithoutMissingData$date)) 
 
@@ -132,13 +139,6 @@ names[3] <- "steps"
 colnames(stepsByWeekday) <- names
 
 xyplot(steps~interval|day, stepsByWeekday, layout = c(1,2), type = "l")
-
 ```
 
-There is certinaly a difference in activity level for weekends and weekdays. 
-
-At first glance, it appears that weekends have a slower start (presumably as people sleep in), there is a slightly more uniform look to the days activites, with regular spikes and valleys (likely as people run errands, come home to relax, etc.)
-
-It looks like weekdays on the other hand, spike earlier in the day, probably as people are commuting in. Once they start working, there is a sharp dropoff and the rest of the day shows the same peaks and valleys of the weekend, but on a much lower range. 
-
-These are all very high level assumptions however, and more analysis would be needed to try and confirm these thoughts. 
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
