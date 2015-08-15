@@ -142,3 +142,11 @@ xyplot(steps~interval|day, stepsByWeekday, layout = c(1,2), type = "l")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
+
+There is certinaly a difference in activity level for weekends and weekdays. 
+
+At first glance, it appears that weekends have a slower start (presumably as people sleep in), there is a slightly more uniform look to the days activites, with regular spikes and valleys (likely as people run errands, come home to relax, etc.)
+
+It looks like weekdays on the other hand, spike earlier in the day, probably as people are commuting in. Once they start working, there is a sharp dropoff and the rest of the day shows the same peaks and valleys of the weekend, but on a much lower range. 
+
+These are all very high level assumptions however, and more analysis would be needed to try and confirm these thoughts. 
